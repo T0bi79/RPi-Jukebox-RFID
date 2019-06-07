@@ -1,0 +1,14 @@
+[Unit]  
+Description=Phoniebox enforced time quota
+After=network.target iptables.service firewalld.service rfid-reader.service startup-sound.service gpio-buttons.service
+
+[Service]
+User=pi
+Group=pi
+Type=oneshot
+RemainAfterExit=true
+WorkingDirectory=/home/pi/RPi-Jukebox-RFID/scripts
+ExecStart=/usr/bin/python /home/pi/RPi-Jukebox-RFID/scripts/quota.py -i
+
+[Install]
+WantedBy=multi-user.target

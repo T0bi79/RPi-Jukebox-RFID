@@ -57,6 +57,12 @@ NOW=`date +%Y-%m-%d.%H:%M:%S`
 # recordstart
 # recordstop
 # recordplaylatest
+# limit1
+# limit2
+# limit3
+# limit4
+# limit5
+# limitoff
 
 # SET VARIABLES
 # The variables can be changed in the ../settings dir.
@@ -159,6 +165,10 @@ case $COMMAND in
         sleep 1
         /usr/bin/mpg123 $PATHDATA/../shared/shutdownsound.mp3 
         sleep 3
+        # remove at jobs if existent (to prevent them starting after next boot)
+        for i in `sudo atq -q s | awk '{print $1}'`;do sudo atrm $i;done # shutdown timer
+        for i in `sudo atq -q t | awk '{print $1}'`;do sudo atrm $i;done # stop timer
+        python $PATHDATA/quota.py -c # time quota timers
         sudo poweroff
         ;;
     shutdownsilent)
@@ -167,7 +177,11 @@ case $COMMAND in
         #remove shuffle mode if active
         SHUFFLE_STATUS=$(echo -e status\\nclose | nc -w 1 localhost 6600 | grep -o -P '(?<=random: ).*')
         if [ "$SHUFFLE_STATUS" == 1 ] ; then  mpc random off; fi
-    sudo poweroff
+        # remove at jobs if existent (to prevent them starting after next boot)
+        for i in `sudo atq -q s | awk '{print $1}'`;do sudo atrm $i;done # shutdown timer
+        for i in `sudo atq -q t | awk '{print $1}'`;do sudo atrm $i;done # stop timer
+        python $PATHDATA/quota.py -c # time quota timers
+        sudo poweroff
         ;;
     shutdownafter)
         # remove shutdown times if existent
@@ -184,6 +198,10 @@ case $COMMAND in
         #remove shuffle mode if active
         SHUFFLE_STATUS=$(echo -e status\\nclose | nc -w 1 localhost 6600 | grep -o -P '(?<=random: ).*')
         if [ "$SHUFFLE_STATUS" == 1 ] ; then  mpc random off; fi
+        # remove at jobs if existent (to prevent them starting after next boot)
+        for i in `sudo atq -q s | awk '{print $1}'`;do sudo atrm $i;done # shutdown timer
+        for i in `sudo atq -q t | awk '{print $1}'`;do sudo atrm $i;done # stop timer
+        python $PATHDATA/quota.py -c # time quota timers
         sudo reboot
         ;;
     scan)
@@ -506,11 +524,21 @@ case $COMMAND in
         #kill arecord instances
         sudo pkill arecord
         ;;
-        recordplaylatest)
+    recordplaylatest)
         #kill arecord and aplay instances
         sudo pkill arecord
         sudo pkill aplay
         aplay `ls $AUDIOFOLDERSPATH/Recordings/*.wav -1t|head -1`
+        ;;
+    grantquota)
+        if [ $VALUE -gt 0 ];
+        then
+            # grant new time quota
+            python $PATHDATA/quota.py -n $VALUE
+        else
+            # disable time quota
+            python $PATHDATA/quota.py -c
+        fi 
         ;;
     *)
         echo Unknown COMMAND $COMMAND VALUE $VALUE

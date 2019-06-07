@@ -65,6 +65,9 @@ $lang['globalRepeat'] = "Repeat";
 $lang['globalLoop'] = "Loop";
 $lang['globalLang'] = "Language";
 $lang['globalLanguageSettings'] = "Language Settings";
+$lang['globalQuota'] = "Time quota";
+$lang['globalQuotaEdit'] = "Grant time quota";
+$lang['globalQuotaSettings'] = "Settings";
 
 // Edition (classic, +spotify)
 $lang['globalEdition'] = "Edition";

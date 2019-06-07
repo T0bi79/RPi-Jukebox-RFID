@@ -157,6 +157,30 @@ if [ "$CARDID" ]; then
             # sudo reboot
             $PATHDATA/playout_controls.sh -c=reboot
             ;;
+        $GRANTQUOTA1)
+            # grant quota of 1 hour
+            $PATHDATA/playout_controls.sh -c=grantquota -v=1
+            ;;
+        $GRANTQUOTA2)
+            # grant quota of 2 hours
+            $PATHDATA/playout_controls.sh -c=grantquota -v=2
+            ;;
+        $GRANTQUOTA3)
+            # grant quota of 3 hours
+            $PATHDATA/playout_controls.sh -c=grantquota -v=3
+            ;;
+        $GRANTQUOTA4)
+            # grant quota of 4 hours
+            $PATHDATA/playout_controls.sh -c=grantquota -v=4
+            ;;
+        $GRANTQUOTA5)
+            # grant quota of 5 hours
+            $PATHDATA/playout_controls.sh -c=grantquota -v=5
+            ;;
+        $QUOTA_OFF)
+            # disable quota limitaton
+            $PATHDATA/playout_controls.sh -c=grantquota -v=0
+            ;;
         $CMDNEXT)
             # play next track in playlist (==folder)
             $PATHDATA/playout_controls.sh -c=playernext

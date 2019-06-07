@@ -118,6 +118,25 @@ include("inc.setVolumeStep.php");
 <div class="panel-group">
   <div class="panel panel-default">
     <div class="panel-heading">
+      <h4 class="panel-title"><a name="quota"></a>
+         <i class='mdi mdi-clock-end'></i> <?php print $lang['globalQuota']; ?>
+      </h4>
+    </div><!-- /.panel-heading -->
+
+    <div class="panel-body">
+      <div class="row">
+<?php
+include("inc.setQuota.php");
+?>
+      </div><!-- / .row -->
+    </div><!-- /.panel-body -->
+
+  </div><!-- /.panel -->
+</div><!-- /.panel-group -->
+
+<div class="panel-group">
+  <div class="panel panel-default">
+    <div class="panel-heading">
       <h4 class="panel-title"><a name="autoShutdown"></a>
         <i class='mdi mdi-clock-end'></i> <?php print $lang['globalAutoShutdown']." ".$lang['globalSettings']; ?>
       </h4>

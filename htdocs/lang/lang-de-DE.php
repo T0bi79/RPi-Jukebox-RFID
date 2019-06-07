@@ -65,6 +65,9 @@ $lang['globalRepeat'] = "Wiederholen";
 $lang['globalLoop'] = "Schleife";
 $lang['globalLang'] = "Sprache";
 $lang['globalLanguageSettings'] = "Spracheinstellungen";
+$lang['globalQuota'] = "Zeitkontingent";
+$lang['globalQuotaEdit'] = "Zeitkontingent aktivieren";
+$lang['globalQuotaSettings'] = "Einstellungen";
 
 // Edition (classic, +spotify)
 $lang['globalEdition'] = "Edition";
