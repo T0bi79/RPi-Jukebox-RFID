@@ -3,46 +3,45 @@ from sys import argv
 import subprocess
 from optparse import OptionParser
 
-# GPIOs configuration for LEDs (if any)
-
-# LED_GPIOS = []  # if no LEDs are used
-LED_GPIOS = [9, 10, 11, 18, 17]  # GPIOs der LEDs
-
-# Absolute location of this script
-
-PATH_SELF_LED = '/home/pi/RPi-Jukebox-RFID/scripts/quota_leds.py'
+import quota_paths
+import quota_cfg
 
 
 def init():
     """
     Initializes the GPIOs for the configured LEDs
     """
+    cfg_lgs = quota_cfg.readElem("led_gpios")
+    if cfg_lgs is None:
+        print('Config error')
+        return
+
     # 1.) GPIOs der LEDs einrichten
     print 'Exporting GPIOs...'
-    for i in range(0, len(LED_GPIOS)):
-        cmd_export = 'echo "%d" > /sys/class/gpio/export; exit 0' % (LED_GPIOS[i])
+    for i in range(0, len(cfg_lgs)):
+        cmd_export = 'echo "%d" > /sys/class/gpio/export; exit 0' % (cfg_lgs[i])
         # print 'cmd_export: ',cmd_export
         res_export = subprocess.check_output(cmd_export, stderr=subprocess.STDOUT, shell=True)
         if(res_export and res_export.strip()):
             print 'Error: ' + res_export
     sleep(0.3)  # to avoid Permission denied error when setting direction
     print 'Setting GPIO direction...'
-    for i in range(0, len(LED_GPIOS)):
-        cmd_direction = 'echo "out" > /sys/class/gpio/gpio%d/direction; exit 0' % (LED_GPIOS[i])
+    for i in range(0, len(cfg_lgs)):
+        cmd_direction = 'echo "out" > /sys/class/gpio/gpio%d/direction; exit 0' % (cfg_lgs[i])
         # print 'cmd_direction:',cmd_direction
         res_direction = subprocess.check_output(cmd_direction, stderr=subprocess.STDOUT, shell=True)
         if(res_direction and res_direction.strip()):
             print 'Error: ' + res_direction
 
 
-def control(led_id, state, minutes):
-    if led_id >= 0 and led_id < len(LED_GPIOS):
+def control(led_gpio, state, minutes):
+    if led_gpio >= 2 and led_gpio <= 27:
         # prepare target state
         s = "0"
         if state > 0:
             s = "1"
         # prepare command
-        c = 'echo "'+s+'" > /sys/class/gpio/gpio%d/value' % (LED_GPIOS[led_id])
+        c = 'echo "'+s+'" > /sys/class/gpio/gpio%d/value' % (led_gpio)
         # prepare timer
         if minutes > 0:
             c = "echo \""+c+"\" | sudo at -q l now + %d minutes; exit 0" % (minutes)
@@ -53,10 +52,6 @@ def control(led_id, state, minutes):
                 print 'Error: ' + res_c
 
 
-def getCount():
-    return len(LED_GPIOS)
-
-
 def cancelTimers():
     atqres = subprocess.check_output('sudo atq -q l', shell=True)
     if len(atqres) > 0:
@@ -64,16 +59,26 @@ def cancelTimers():
 
 
 def disableAll():
-    for i in range(0, len(LED_GPIOS)):
-        control(i, 0, 0)
+    cfg_lgs = quota_cfg.readElem("led_gpios")
+    if cfg_lgs is None:
+        print('Config error')
+        return
+
+    for g in cfg_lgs:
+        control(g, 0, 0)
 
 
 def animate_leds_on(units, dur_on):
     # Programs the ignition of the specified number of LEDs
-    n_leds = min(units, len(LED_GPIOS))
+    cfg_lgs = quota_cfg.readElem("led_gpios")
+    if cfg_lgs is None:
+        print('Config error')
+        return
+
+    n_leds = min(units, len(cfg_lgs))
 
     for i in range(0, n_leds):
-        control(i, 1, 0)
+        control(cfg_lgs[i], 1, 0)
         if i < (n_leds-1):
             sleep(dur_on)
     return
@@ -81,9 +86,14 @@ def animate_leds_on(units, dur_on):
 
 def animate_leds_off(units, dur_off):
     # Programs the extinction of the specified number of LEDs
-    n_leds = min(units, len(LED_GPIOS))
+    cfg_lgs = quota_cfg.readElem("led_gpios")
+    if cfg_lgs is None:
+        print('Config error')
+        return
+
+    n_leds = min(units, len(cfg_lgs))
     for i in range(0, n_leds):
-        control(i, 0, ((n_leds-i)*dur_off))
+        control(cfg_lgs[i], 0, ((n_leds-i)*dur_off))
 
 
 def animate(units, dur_on, dur_off):
@@ -91,7 +101,7 @@ def animate(units, dur_on, dur_off):
     animate_leds_off(units, dur_off)
 
     # run animated switch-on (asynchronously in order not to block the caller)
-    cmd_schedign = 'echo "python '+PATH_SELF_LED+' -n '+str(units)+' -m '+str(dur_on)+'" | sudo at -q l now; exit 0'
+    cmd_schedign = 'echo "python ' + quota_paths.LEDS + ' -n ' + str(units) + ' -m ' + str(dur_on) + '" | sudo at -q l now; exit 0'
     res_schedign = subprocess.check_output(cmd_schedign, stderr=subprocess.STDOUT, shell=True)
     if(res_schedign and res_schedign.strip()):  # todo: ab hier weg, hier unoetig, oder?
         if not('warning: commands will be executed using /bin/sh' in res_schedign):

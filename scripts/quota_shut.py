@@ -3,16 +3,16 @@ import subprocess
 
 
 def prepare_shutdown(shutcmd, farewell_mp3, farewell_dur, canceltime_dur, schedule_dur):
-    min_wait_secs = 0  # this variable will receive the minimum amount of seconds for which the shutdown will be sheduled
+    min_wait_secs = 0  # this variable will receive the minimum amount of seconds for which the shutdown will be scheduled
 
     # respect the passed amound of seconds that the user has cancel the shutdown
     min_wait_secs += canceltime_dur
 
     # respect the length of a passed farewell sound
     if farewell_mp3 and farewell_dur > 0:
-        min_wait_secs += msg_mp3_len
+        min_wait_secs += farewell_dur
 
-    # respect the passed shedule time
+    # respect the passed schedule time
     if schedule_dur > 0:
         min_wait_secs += schedule_dur
 
@@ -27,7 +27,7 @@ def prepare_shutdown(shutcmd, farewell_mp3, farewell_dur, canceltime_dur, schedu
         if not('warning: commands will be executed using /bin/sh' in res_schedshut):
             print 'Error: '+res_schedshut
 
-    # Info vorspielen, dass gleich ausgeht
+    # play farewell / information MP3
     if farewell_mp3:
         subprocess.call(['/usr/bin/mpg123', farewell_mp3])
 
