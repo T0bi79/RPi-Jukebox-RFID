@@ -16,19 +16,18 @@ def init():
         print('Config error')
         return
 
-    # 1.) GPIOs der LEDs einrichten
-    print 'Exporting GPIOs...'
+    print 'Exporting configured GPIOs to device tree...'
     for i in range(0, len(cfg_lgs)):
         cmd_export = 'echo "%d" > /sys/class/gpio/export; exit 0' % (cfg_lgs[i])
-        # print 'cmd_export: ',cmd_export
         res_export = subprocess.check_output(cmd_export, stderr=subprocess.STDOUT, shell=True)
         if(res_export and res_export.strip()):
             print 'Error: ' + res_export
-    sleep(0.3)  # to avoid Permission denied error when setting direction
-    print 'Setting GPIO direction...'
+            
+    sleep(0.3)  # to avoid "permission denied" error when setting direction
+    
+    print 'Setting GPIO directions...'
     for i in range(0, len(cfg_lgs)):
         cmd_direction = 'echo "out" > /sys/class/gpio/gpio%d/direction; exit 0' % (cfg_lgs[i])
-        # print 'cmd_direction:',cmd_direction
         res_direction = subprocess.check_output(cmd_direction, stderr=subprocess.STDOUT, shell=True)
         if(res_direction and res_direction.strip()):
             print 'Error: ' + res_direction
@@ -68,44 +67,53 @@ def disableAll():
         control(g, 0, 0)
 
 
-def animate_leds_on(units, dur_on):
+def animate_leds_on(n_leds, dur_on):
     # Programs the ignition of the specified number of LEDs
     cfg_lgs = quota_cfg.readElem("led_gpios")
     if cfg_lgs is None:
         print('Config error')
         return
 
-    n_leds = min(units, len(cfg_lgs))
+    cnt = min(n_leds, len(cfg_lgs))
 
-    for i in range(0, n_leds):
+    for i in range(0, cnt):
         control(cfg_lgs[i], 1, 0)
-        if i < (n_leds-1):
+        if i < (cnt-1):
             sleep(dur_on)
     return
 
 
-def animate_leds_off(units, dur_off):
-    # Programs the extinction of the specified number of LEDs
+def animate_leds_off(minutes):
+    # Programs the extinction sequence of LEDs.
+    # Returns the calculated number of required LEDs (might exceed configured number of LEDs) or None on config error
+    cfg_lm = quota_cfg.readElem('led_minutes')
     cfg_lgs = quota_cfg.readElem("led_gpios")
-    if cfg_lgs is None:
+    if cfg_lm is None or cfg_lgs is None:
+        print('Config error')
+        return None
+
+    full_leds = int(round(minutes/cfg_lm))
+    rest = minutes - (cfg_lm*full_leds)
+    for i in range(0, full_leds+1):
+        if i < len(cfg_lgs):
+            control(cfg_lgs[i], 0, ((full_leds-i)*cfg_lm)+rest)
+    return full_leds + min(1, rest)
+
+
+def animate(minutes):
+    cfg_la = quota_cfg.readElem('led_animation')  # cfg_la is in seconds (e.g. 0.3)
+    if cfg_la is None:
         print('Config error')
         return
 
-    n_leds = min(units, len(cfg_lgs))
-    for i in range(0, n_leds):
-        control(cfg_lgs[i], 0, ((n_leds-i)*dur_off))
-
-
-def animate(units, dur_on, dur_off):
-    # program animated switch-off. dur_on is in seconds (e.g. 0.3), dur_off is in minutes
-    animate_leds_off(units, dur_off)
+    # program animated switch-off. 
+    n_leds = animate_leds_off(minutes)
+    if n_leds is None:
+        return;
 
     # run animated switch-on (asynchronously in order not to block the caller)
-    cmd_schedign = 'echo "python ' + quota_paths.LEDS + ' -n ' + str(units) + ' -m ' + str(dur_on) + '" | sudo at -q l now; exit 0'
-    res_schedign = subprocess.check_output(cmd_schedign, stderr=subprocess.STDOUT, shell=True)
-    if(res_schedign and res_schedign.strip()):  # todo: ab hier weg, hier unoetig, oder?
-        if not('warning: commands will be executed using /bin/sh' in res_schedign):
-            print 'Error: ' + res_schedign
+    cmd_schedign = 'echo "python ' + quota_paths.LEDS + ' -n ' + str(n_leds) + ' -m ' + str(cfg_la) + '" | sudo at -q l now; exit 0'
+    subprocess.check_output(cmd_schedign, stderr=subprocess.STDOUT, shell=True)
     return
 
 
@@ -121,15 +129,15 @@ def parse_params():
     parser = OptionParser("quota_led.py [options]")
     parser.add_option("-n", "--ani_leds",   dest="opt_leds",  default=None,  action="store", help="Animate (ignite) the specified number of LEDs")
     parser.add_option("-m", "--ani_ms",     dest="opt_ms",    default=None,  action="store", help="Interval between ignitions in seconds, e.g. 0.3 (use with -n)")
-    (optionen, args) = parser.parse_args()
+    (options, args) = parser.parse_args()
 
-    if optionen.opt_leds and optionen.opt_leds.isdigit():
+    if options.opt_leds and options.opt_leds.isdigit():
         # the script was called to start a LED animation
-        n_leds = int(optionen.opt_leds)
+        n_leds = int(options.opt_leds)
         if n_leds > 0:
             dur = 0.0
-            if optionen.opt_ms and isfloat(optionen.opt_ms):
-                dur = float(optionen.opt_ms)
+            if options.opt_ms and isfloat(options.opt_ms):
+                dur = float(options.opt_ms)
             else:
                 print "No animation interval was specified. Using 0."
             animate_leds_on(n_leds, dur)

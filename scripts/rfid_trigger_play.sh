@@ -157,25 +157,33 @@ if [ "$CARDID" ]; then
             # sudo reboot
             $PATHDATA/playout_controls.sh -c=reboot
             ;;
-        $GRANTQUOTA1)
+        $GRANTQUOTA60)
             # grant quota of 1 hour
-            $PATHDATA/playout_controls.sh -c=grantquota -v=1
+            $PATHDATA/playout_controls.sh -c=grantquota -v=60
             ;;
-        $GRANTQUOTA2)
+        $GRANTQUOTA90)
+            # grant quota of 1.5 hours
+            $PATHDATA/playout_controls.sh -c=grantquota -v=90
+            ;;
+        $GRANTQUOTA120)
             # grant quota of 2 hours
-            $PATHDATA/playout_controls.sh -c=grantquota -v=2
+            $PATHDATA/playout_controls.sh -c=grantquota -v=120
             ;;
-        $GRANTQUOTA3)
+        $GRANTQUOTA150)
+            # grant quota of 2.5 hours
+            $PATHDATA/playout_controls.sh -c=grantquota -v=150
+            ;;
+        $GRANTQUOTA180)
             # grant quota of 3 hours
-            $PATHDATA/playout_controls.sh -c=grantquota -v=3
+            $PATHDATA/playout_controls.sh -c=grantquota -v=180
             ;;
-        $GRANTQUOTA4)
+        $GRANTQUOTA240)
             # grant quota of 4 hours
-            $PATHDATA/playout_controls.sh -c=grantquota -v=4
+            $PATHDATA/playout_controls.sh -c=grantquota -v=240
             ;;
-        $GRANTQUOTA5)
+        $GRANTQUOTA300)
             # grant quota of 5 hours
-            $PATHDATA/playout_controls.sh -c=grantquota -v=5
+            $PATHDATA/playout_controls.sh -c=grantquota -v=300
             ;;
         $QUOTA_OFF)
             # disable quota limitaton

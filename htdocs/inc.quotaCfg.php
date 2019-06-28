@@ -3,12 +3,13 @@
 $QUOTA_JSON_PATH = "/home/pi/RPi-Jukebox-RFID/settings/quota_cfg.json";
 
 # description of the configuration.
-# - minutes_per_unit:      Duration of 1 time unit (in minutes). After each passed time unit, 1 LED will switch off (if LEDs are used)
-# - default_units:         Number of time units that will granted after booting the box (if the last grant was more than minutes_to_reset ago)
+# - enabled:               Disables (0) or enables (1) the time quota system
+# - default_minutes:       Number of minutes that will be granted after booting the box (if the last grant was more than minutes_to_reset ago)
 # - minutes_to_reset:      Number of minutes after which an expired time quota gets renewed on reboot
 # - last_quota_activation: Unix timestamp (rounded to full seconds) stating the timestamp when the current quota was granted
 # - led_gpios:             Ordered list of GPIO numbers for all mounted LEDs
 # - led_animation:         Time interval in seconds which is used for animated LED ignition (time between two ignitions, e.g 0.3)
+# - led_minutes:           Each time after this amount of minutes, 1 LED will switch off (if LEDs are used)
 
 
 function internal_defaultcfg(){
@@ -16,18 +17,19 @@ function internal_defaultcfg(){
     # The entire default config may be used if the cfg file cannot be opened or loaded correctly
     # Single default values may be used if single config values are out of the allowed range
     $cfg = [];
-    $cfg["minutes_per_unit"] = 30;
-    $cfg["default_units"] = 4;
+    $cfg["enabled"] = 0;
+    $cfg["default_minutes"] = 120;
     $cfg["minutes_to_reset"] = 480;
     $cfg["last_quota_activation"] = time();
     $cfg["led_gpios"] = [];
+    $cfg["led_minutes"] = 30;
     $cfg["led_animation"] = 0.3;
     return $cfg;
 }
 
 function internal_checkInteger($i, $minval=null, $maxval=null){
     # Check if the specified value is an integer and in the allowed range (if passed)
-    if($i != null && is_int($i)){
+    if($i !== null && is_int($i)){
         $is_ok = True;
         if($minval !== null && $i < $minval) $is_ok = False;
         if($maxval !== null && $i > $maxval) $is_ok = False;
@@ -38,7 +40,7 @@ function internal_checkInteger($i, $minval=null, $maxval=null){
 
 function internal_checkFloat($f, $minval=null, $maxval=null){
     # Check if the specified value is a float (or integer) and in the allowed range (if passed)
-    if($f != null && (is_float($f) || is_double($f) || is_int($f))){
+    if($f !== null && (is_float($f) || is_double($f) || is_int($f))){
         $is_ok = True;
         if($minval !== null && $f < $minval) $is_ok = False;
         if($maxval !== null && $f > $maxval) $is_ok = False;
@@ -63,10 +65,13 @@ function internal_checkIntegerArray($a, $minval=null, $maxval=null){
 
 
 function checkImmediateValue($key, $value, &$default=null){
-    if($key == "minutes_per_unit"){
+    if($key == "enabled"){
+        if(internal_checkInteger($value, 0, 1)) return True;
+    }
+    else if($key == "led_minutes"){
         if(internal_checkInteger($value, 1)) return True;
     }
-    else if($key == "default_units"){
+    else if($key == "default_minutes"){
         if(internal_checkInteger($value, 1)) return True;
     }
     else if($key == "minutes_to_reset"){
@@ -114,8 +119,9 @@ function checkcfg(&$cfg, $allow_def){
     # Returns true if cfg is (now) valid
     if(!$cfg) return False;
 
-    if(!checkConfigValue($cfg, "minutes_per_unit",      $allow_def)) return False;
-    if(!checkConfigValue($cfg, "default_units",         $allow_def)) return False;
+    if(!checkConfigValue($cfg, "enabled",               $allow_def)) return False;
+    if(!checkConfigValue($cfg, "led_minutes",      $allow_def)) return False;
+    if(!checkConfigValue($cfg, "default_minutes",         $allow_def)) return False;
     if(!checkConfigValue($cfg, "minutes_to_reset",      $allow_def)) return False;
     if(!checkConfigValue($cfg, "last_quota_activation", $allow_def)) return False;
     if(!checkConfigValue($cfg, "led_gpios",             $allow_def)) return False;

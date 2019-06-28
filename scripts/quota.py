@@ -1,6 +1,4 @@
-from time import sleep, time
-import os
-import os.path
+from time import time
 from optparse import OptionParser
 import subprocess
 
@@ -10,47 +8,40 @@ import quota_shut   # shutdown scheduler
 import quota_leds   # LED scheduler
 
 
-def get_remaining_time_units():
+def get_remaining_minutes():
     """
-    Calculates the starting grant (default grant minus recently consumed quota), rounded to full time units
+    Calculates the starting grant (default grant minus recently consumed quota), in remaining minutes
     """
-    print 'get_remaining_time_units'
+    print 'get_remaining_minutes'
     now = int(round(time()))
 
     # read config
     cfg = quota_cfg.readCfg()
-    if((not cfg) or ('minutes_per_unit' not in cfg) or ('default_units' not in cfg) or ('minutes_to_reset' not in cfg) or ('last_quota_activation' not in cfg)):
+    if((not cfg) or ('default_minutes' not in cfg) or ('minutes_to_reset' not in cfg) or ('last_quota_activation' not in cfg) or ('led_minutes' not in cfg)):
         print('Config error')
         return
 
-    cfg_mpu = cfg['minutes_per_unit']
-    cfg_dl = cfg['default_units']
+    cfg_dl = cfg['default_minutes']
     cfg_mtr = cfg['minutes_to_reset']
     cfg_lqa = min(cfg['last_quota_activation'], now)
+    cfg_lm = cfg['led_minutes']
 
     # 1.) Ermittele aktuellen Kontingentverbrauch (ggf. vor Reboot der Box)
-    verbraucht = (now - cfg_lqa) / 60  # verbrauchtes Kontingent in Minuten.
-    if verbraucht >= cfg_mtr:          # Wenn das verbrauchte Kontingent aelter ist als cfg[minutes_to_reset], ist das auch OK. Vergebe neues Kontingent
-        print 'lockfile is old enough, granting new time quota'
+    consumed = (now - cfg_lqa) / 60  # consumed quota in minutes
+    if consumed >= cfg_mtr:          # if the consumed quota is older than cfg[minutes_to_reset], this is OK as well. We'll grant new default quota
+        print 'last grant is old enough, granting new time quota'
         cfg['last_quota_activation'] = now
         quota_cfg.writeCfg(cfg)
-        verbraucht = 0
+        consumed = 0
 
-    # 2.) Ermittele, wie lange die Box nun nach Start freigeschaltet werden darf
-    # Das Rest-Kontingent (Default-Zeit abzgl. verbrauchtes Kontingent) wird zu naheliegendster voller Zeiteinheit auf/abgerundet
-    # D.h. bei sehr wenig Restzeit (unter halbe Zeiteinheit) wird nach einem Neustart kein Kontingent mehr gewaehrt
-    default_limit = cfg_dl * cfg_mpu  # Default-Kontingent in Minuten
-    current_limit = default_limit - verbraucht        # Rest-Kontingent in Minuten
-    print 'remaining quota is', current_limit, 'minutes'
-    current_limit -= (cfg_mpu/2)
-    if int(current_limit) <= 0:
+    # 2.) Calculate how much quota may be granted this time
+    remaining = cfg_dl - consumed        # remaining quota is default quota minus consumed quota
+    print 'remaining quota is', remaining, 'minutes'
+    if remaining <= 0:
         print 'too little quota for a new reboot'
-        return 0                                      # Keine Starterlaubnis
-    granted_limit = int(current_limit / cfg_mpu)
-    if (int(current_limit) % cfg_mpu > 0):
-        granted_limit += 1
-    print 'granting %d time units' % granted_limit
-    return granted_limit                              # Starterlaubnis fuer (granted limit) Zeiteinheiten
+        return 0
+    print 'granting %d minutes' % remaining
+    return remaining
 
 
 def f_init():
@@ -60,31 +51,24 @@ def f_init():
     print 'f_init'
     quota_leds.init()
 
-    # 2.) Ermittle Abschaltzeit (Defaultwert oder Restkontingent) und...
-    time_units = get_remaining_time_units()
-    if time_units > 0:
-        print 'Create new timer for %d periods.' % time_units
-        f_newtimer(time_units)  # ...aktiviere Abschaltzeit oder ...
-    else:                   # ...fahre Box wieder herunter
+    remaining = get_remaining_minutes()
+    if remaining > 0:
+        print 'Create new timer for %d minutes.' % remaining
+        f_newtimer(remaining)
+    else:
         print 'Shutting down since time elapsed.'
         f_canceltimers()
         quota_shut.prepare_shutdown(quota_paths.PLAYOUT+' -c=shutdown', quota_paths.GBYEMP3, 4, 6, 0)
 
 
-def f_newtimer(units):
+def f_newtimer(minutes):
     """
     Creates a new shutdown timer (pre-existing timers are removed initially)
     """
     print 'f_newtimer'
-    cfg_mpu = quota_cfg.readElem('minutes_per_unit')
-    cfg_la = quota_cfg.readElem('led_animation')
-    if cfg_mpu is None or cfg_la is None:
-        print('Config error')
-        return
-
-    f_canceltimers()  # Beinhaltet Abschalten evtl. noch leuchtender LEDs
-    quota_shut.prepare_shutdown('python '+quota_paths.MAIN+' -s', None, 0, 6, cfg_mpu*units*60)
-    quota_leds.animate(units, cfg_la, cfg_mpu)
+    f_canceltimers()  # includes switching of LEDs that might still be active
+    quota_shut.prepare_shutdown('python '+quota_paths.MAIN+' -s', None, 0, 6, minutes*60)
+    quota_leds.animate(minutes)
 
 
 def f_canceltimers():
@@ -117,26 +101,26 @@ def parse_params():
     parser.add_option('-n', '--newtimer',     dest='opt_timer',    default=None,  action='store',      help='Programs a shutdown timer')
     parser.add_option('-c', '--canceltimers', dest='opt_cancel',   default=False, action='store_true', help='Deactivates a shutdown timer')
     parser.add_option('-s', '--shutdown',     dest='opt_shutdown', default=False, action='store_true', help='Shutdown after current mpd title')
-    (optionen, args) = parser.parse_args()
+    (options, args) = parser.parse_args()
 
-    if optionen.opt_init:
+    if options.opt_init:
         f_init()
 
-    elif optionen.opt_gpioupd:
+    elif options.opt_gpioupd:
         quota_leds.init()
 
-    elif optionen.opt_cancel:
+    elif options.opt_cancel:
         f_canceltimers()
 
-    elif optionen.opt_timer and optionen.opt_timer.isdigit():
-        t = int(optionen.opt_timer)
+    elif options.opt_timer and options.opt_timer.isdigit():
+        t = int(options.opt_timer)
         if t > 0:
             quota_cfg.writeElem('last_quota_activation', int(round(time())))
             f_newtimer(t)
         else:
             print 'No valid duration given'
 
-    elif optionen.opt_shutdown:
+    elif options.opt_shutdown:
         f_shutdown(True)
 
     else:

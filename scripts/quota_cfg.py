@@ -5,11 +5,12 @@ from time import time
 import quota_paths
 
 # description of the configuration.
-# - minutes_per_unit:      Duration of 1 time unit (in minutes). After each passed time unit, 1 LED will switch off (if LEDs are used)
-# - default_units:         Number of time units that will granted after booting the box (if the last grant was more than minutes_to_reset ago)
+# - enabled:               Disables (0) or enables (1) the time quota system
+# - default_minutes:       Number of minutes that will be granted after booting the box (if the last grant was more than minutes_to_reset ago)
 # - minutes_to_reset:      Number of minutes after which a elapsed quota may renew on reboot
 # - last_quota_activation: Unix timestamp (rounded to full seconds) stating the timestamp when the current quota was granted
 # - led_gpios:             Ordered list of GPIO numbers for all mounted LEDs
+# - led_minutes:           Each time after this amount of minutes, 1 LED will switch off (if LEDs are used)
 # - led_animation:         Time interval in seconds which is used for animated LED ignition (time between two ignitions, e.g 0.3)
 
 
@@ -18,11 +19,12 @@ def internal_defaultcfg():
     # The entire default config may be used if the cfg file cannot be opened or loaded correctly
     # Single default values may be used if single config values are out of the allowed range
     cfg = {}
-    cfg['minutes_per_unit'] = 30
-    cfg['default_units'] = 4
+    cfg['enabled'] = 0
+    cfg['default_minutes'] = 120
     cfg['minutes_to_reset'] = 480
     cfg['last_quota_activation'] = int(round(time()))
     cfg['led_gpios'] = []
+    cfg['led_minutes'] = 30
     cfg['led_animation'] = 0.3
     return cfg
 
@@ -73,10 +75,13 @@ def internal_checkIntegerList(a, minval=None, maxval=None):
 
 
 def checkImmediateValue(key, value, default=None):
-    if(key == "minutes_per_unit"):
+    if(key == "enabled"):
+        if(internal_checkInteger(value, 0, 1)):
+            return True
+    elif(key == "led_minutes"):
         if(internal_checkInteger(value, 1)):
             return True
-    elif(key == "default_units"):
+    elif(key == "default_minutes"):
         if(internal_checkInteger(value, 1)):
             return True
     elif(key == "minutes_to_reset"):
@@ -128,9 +133,11 @@ def checkcfg(cfg, allow_def):
     # Returns true if cfg is (now) valid
     if not cfg:
         return False
-    if not checkConfigValue(cfg, "minutes_per_unit", allow_def):
+    if not checkConfigValue(cfg, "enabled", allow_def):
         return False
-    if not checkConfigValue(cfg, "default_units", allow_def):
+    if not checkConfigValue(cfg, "led_minutes", allow_def):
+        return False
+    if not checkConfigValue(cfg, "default_minutes", allow_def):
         return False
     if not checkConfigValue(cfg, "minutes_to_reset", allow_def):
         return False
