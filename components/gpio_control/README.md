@@ -68,7 +68,7 @@ However, a button has more parameters than these. In the following comprehensive
 * **bouncetime**: This is a setting of the GPIO library to limit bouncing effects during button usage. Default is `500` ms.
 * **antibouncehack**: Despite the integrated bounce reduction of the GPIO library some users may notice false triggers of their buttons (e.g. unrequested / double actions when releasing the button. If you encounter such problems, try setting this setting to `True` to activate an additional countermeasure.
 
-
+Note: If you prefer, you may also use `Type: SimpleButton` instead of `Type: Button` - this makes no difference.
 
 ## ShutdownButton<a name="doc_sdbutton"></a> 
 An extended ShutdownButton can be created using an `ini` entry like these:
@@ -94,6 +94,37 @@ Again, there are more parameters than these. In the following comprehensive list
 * **functionCall**: While the default action is `functionCallShutdown`, you might use this button type even with other functions than system shutdown (again, see [function documentation below](#doc_funcs) for a list of available functions).
 
 Furthermore, the following settings can be used as described for the [regular buttons](#doc_button): **pull_up_down**, **edge**, **bouncetime**, **antibouncehack**
+
+## TwoButtonControl<a name="doc_twobutton"></a> 
+A  TwoButtonControl can be created using an `ini` entry like this:
+```
+[VolumeControl]
+enabled: True
+Type: TwoButtonControl
+Pin1: 5
+Pin2: 6
+hold_time: 0.3
+hold_repeat: True
+functionCall1: functionCallVolD
+functionCall2: functionCallVolU
+functionCallTwoButtons: functionCallVol0
+```
+
+TODO: details ...
+
+## RotaryEncoder<a name="doc_rotary"></a> 
+A  RotaryEncoder can be created using an `ini` entry like this:
+```
+enabled: True
+Type: RotaryEncoder
+PinUp: 7
+PinDown: 8
+timeBase: 0.02
+functionCallDown: functionCallVolD
+functionCallUp: functionCallVolU
+```
+
+TODO: details ...
 
 ## Functions<a name="doc_funcs"></a> 
 The available functions are defined/implemented in `components/gpio_control/function_calls.py`:
