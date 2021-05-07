@@ -56,6 +56,7 @@ However, a button has more parameters than these. In the following comprehensive
   
   Holding the button even longer than `hold_time` will cause no further action unless you are in the `Repeat` mode.
 * **hold_time**: Reference time for this buttons `hold_mode` feature in seconds. Default is `0.3`. This setting is ignored if `hold_mode` is unset or `None`
+* **functionCall2**: Secondary function; default is `None`. This setting is ignored if `hold_mode` is unset or different to `SecondFunc`.
 * **pull_up_down**: Configures the internal Pull up/down resistors. Valid settings:
   * `pull_up` (Default). Internal pull-up resistors are activated. Use this if you attached a button to `GND` to the GPIO pin without any external pull-up resistor.
   * `pull_down`. Use this if you need the internal pull-down resistor activated.
@@ -92,7 +93,7 @@ Again, there are more parameters than these. In the following comprehensive list
 * **iteration_time**: This parameter determines the flashing speed of the LED indicator. Default value is `0.2` seconds.
 * **functionCall**: While the default action is `functionCallShutdown`, you might use this button type even with other functions than system shutdown (again, see [function documentation below](#doc_funcs) for a list of available functions).
 
-Furthermore, the following settings can be used as described for the regular buttons: **pull_up_down**, **edge**, **bouncetime**, **antibouncehack**
+Furthermore, the following settings can be used as described for the [regular buttons](#doc_button): **pull_up_down**, **edge**, **bouncetime**, **antibouncehack**
 
 ## Functions<a name="doc_funcs"></a> 
 The available functions are defined/implemented in `components/gpio_control/function_calls.py`:
