@@ -18,6 +18,9 @@ Up to now the following input devices are implemented:
    A simple button which has a hold and repeat functionality as well as a delayed action. 
    Its main parameters are: `Pin` (**use GPIO number here**) and `functionCall`. For additional options, see [extended documentation below](#doc_button).
 
+* **ShutdownButton**: 
+   A specialized implementation for a shutdown button with integrated (but optional) LED support. It initializes a shutdown if the button is pressed more than `time_pressed` seconds and a (optional) LED on GPIO `led_pin` is flashing until that time is reached. For additional information, see [extended documentation below](#doc_sdbutton).
+
 * **RotaryEncoder**:
     Control of a rotary encoder, for example KY040, see also in 
     [Wiki](https://github.com/MiczFlor/RPi-Jukebox-RFID/wiki/Audio-RotaryKnobVolume)
@@ -32,7 +35,7 @@ Many example files are located in `~/RPi-Jukebox-RFID/components/gpio_control/ex
 
 # Extended documentation
 ## Button<a name="doc_button"></a> 
-At the most basic level, a button can be created using a `ini` entry like this:
+At the most basic level, a button can be created using an `ini` entry like this:
 ```
 [PlayPause]
 enabled: True
@@ -40,18 +43,18 @@ Type: Button
 Pin: 27
 functionCall: functionCallPlayerPause
 ```
-* **enabled**: This needs to be 'True' for the button to work.
+* **enabled**: This needs to be `True` for the button to work.
 * **Pin**: GPIO number
 * **functionCall**: The function that you want to be called on a button press. See  [function documentation below](#doc_funcs).
 
-However, a button has more parameters than this. In the following comprehensive list you can also find the default values which are used if you leave out these settings;
+However, a button has more parameters than these. In the following comprehensive list you can also find the default values which are used automatically if you leave out these settings:
 * **hold_mode**: Specifies what shall happen if the button is held pressed for longer than `hold_time`:
   *  `None` (Default): Nothing special will happen.
   *  `Repeat`: The same function call will be repeated after each `hold_time` interval.
   *  `Postpone`: The function will not be called before `hold_time`, i.e. the button needs to be pressed this long to activate the function
   *  `SecondFunc`: After the instant execution of `functionCall`, holding the button for at least `hold_time` will execute a different function `functionCall2`.
   
-  Holding the button even longer than `hold_time` will cause no further function calls unless you are in the `Repeat` mode.
+  Holding the button even longer than `hold_time` will cause no further action unless you are in the `Repeat` mode.
 * **hold_time**: Reference time for this buttons `hold_mode` feature in seconds. Default is `0.3`. This setting is ignored if `hold_mode` is unset or `None`
 * **pull_up_down**: Configures the internal Pull up/down resistors. Valid settings:
   * `pull_up` (Default). Internal pull-up resistors are activated. Use this if you attached a button to `GND` to the GPIO pin without any external pull-up resistor.
@@ -62,8 +65,49 @@ However, a button has more parameters than this. In the following comprehensive 
   * `rising`. Trigegrs only if the GPIO voltage goes up.
   * `both`. Triggers in both cases.
 * **bouncetime**: This is a setting of the GPIO library to limit bouncing effects during button usage. Default is `500` ms.
-* **antibouncehack**: Despite the integrated bounce reduction of the GPIO library some users notice false triggers of their buttons (e.g. unrequested / double actions when releasing the button. If you encounter such problems, set this setting to `True` to activate an additional countermeasure.
+* **antibouncehack**: Despite the integrated bounce reduction of the GPIO library some users may notice false triggers of their buttons (e.g. unrequested / double actions when releasing the button. If you encounter such problems, try setting this setting to `True` to activate an additional countermeasure.
 
+
+
+## ShutdownButton<a name="doc_sdbutton"></a> 
+An extended ShutdownButton can be created using an `ini` entry like these:
+```
+[Shutdown_without_LED]
+enabled: True
+Type:  ShutdownButton
+Pin: 3
+
+[Shutdown_with_LED]
+enabled: True
+Type:  ShutdownButton
+Pin: 3
+led_pin: 17
+```
+* **enabled**: This needs to be `True` for the extended shutdown button to work.
+* **Pin**: GPIO number of the button
+* **led_pin**: GPIO number of the LED (Default is `None`). Note that you should not attach LEDs to GPIO ports without a matching resistor in line.
+
+Again, there are more parameters than these. In the following comprehensive list you can also find the default values which are used automatically if you leave out these settings:
+* **time_pressed**: This parameter controls how many seconds (default: `2.0`) the button has to be hold until shutdown will be initiated.
+* **iteration_time**: This parameter determines the flashing speed of the LED indicator. Default value is `0.2` seconds.
+* **functionCall**: While the default action is `functionCallShutdown`, you might use this button type even with other functions than system shutdown (again, see [function documentation below](#doc_funcs) for a list of available functions).
+
+Furthermore, the following settings can be used as described for the regular buttons: **pull_up_down**, **edge**, **bouncetime**, **antibouncehack**
 
 ## Functions<a name="doc_funcs"></a> 
-Functions can be found here: TODO
+The available functions are defined/implemented in `components/gpio_control/function_calls.py`:
+* **functionCallShutdown**: System shutdown
+* **functionCallVolU**: Volupe up
+* **functionCallVolD**: Volume down
+* **functionCallVol0**: Mute
+* **functionCallPlayerNext**: Next track
+* **functionCallPlayerPrev**: Previous track
+* **functionCallPlayerPauseForce**: Pause (forced)
+* **functionCallPlayerPause**: Pause
+* **functionCallRecordStart**: Start recording
+* **functionCallRecordStop**: Stop recording
+* **functionCallRecordPlayLatest**: Play latest recording
+* **functionCallToggleWifi**: Toggle WIFI
+* **functionCallPlayerStop**: Stop Player
+* **functionCallPlayerSeekFwd**: Seek 10 seconds forward
+* **functionCallPlayerSeekBack**: Seek 10 seconds backward
