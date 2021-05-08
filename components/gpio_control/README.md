@@ -16,18 +16,17 @@ Each device can have actions which correspond to function calls.
 Up to now the following input devices are implemented:
 * **Button**: 
    A simple button which has a hold and repeat functionality as well as a delayed action. 
-   Its main parameters are: `Pin` (**use GPIO number here**) and `functionCall`. For additional options, see [extended documentation below](#doc_button).
+   Its main parameters are: `Pin` (use GPIO number here) and `functionCall`. For additional options, see [extended documentation below](#doc_button).
 
 * **ShutdownButton**: 
    A specialized implementation for a shutdown button with integrated (but optional) LED support. It initializes a shutdown if the button is pressed more than `time_pressed` seconds and a (optional) LED on GPIO `led_pin` is flashing until that time is reached. For additional information, see [extended documentation below](#doc_sdbutton).
 
 * **RotaryEncoder**:
-    Control of a rotary encoder, for example KY040, see also in 
-    [Wiki](https://github.com/MiczFlor/RPi-Jukebox-RFID/wiki/Audio-RotaryKnobVolume)
-    it can be configured using pinA (**use GPIO number here**), pinB (**use GPIO number here**), functionCallIncr, functionCallDecr, timeBase=0.1
+    Control of a rotary encoder, for example KY040, see also in [Wiki](https://github.com/MiczFlor/RPi-Jukebox-RFID/wiki/Audio-RotaryKnobVolume).
+    It can be configured using `pinUp` and `PiNDown` (use GPIO numbers here), `functionCallUp`, `functionCallDown`, and `timeBase` see [extended documentation below](#doc_rotary).
 
 * **TwoButtonControl**:
-    This Device uses two Buttons and implements a third action if both buttons are pressed together.
+    This Device uses two Buttons and implements a third action if both buttons are pressed together. See [extended documentation below](#doc_twobutton).
 
 * **StatusLED**:
     A LED which will light up once the Phoniebox has fully booted up and is ready to be used. For additional information, see [extended documentation below](#doc_sled).
@@ -37,6 +36,8 @@ Each section needs to be activated by setting `enabled: True`.
 Many example files are located in `~/RPi-Jukebox-RFID/components/gpio_control/example_configs/`.
 
 # Extended documentation
+This section provides some extended documentation and guideline. Especially some exemplary configurations are introduced showing how these controls can be set up in the configuration file `~/RPi-Jukebox-RFID/settings/gpio_settings.ini`.
+
 ## Button<a name="doc_button"></a> 
 At the most basic level, a button can be created using an `ini` entry like this:
 ```
