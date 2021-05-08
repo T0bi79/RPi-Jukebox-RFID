@@ -99,6 +99,18 @@ Again, there are more parameters than these. In the following comprehensive list
 
 Furthermore, the following settings can be used as described for the [regular buttons](#doc_button): **pull_up_down**, **edge**, **bouncetime**, **antibouncehack**
 
+Note that using a ShutdownButton without a LED can also be implemented with a normal button like this:
+
+```
+[PlayPause]
+enabled: True
+Type: Button
+Pin: 3
+hold_mode: Postpone
+hold_time: 3.0
+functionCall: functionCallShutdown
+```
+
 ## TwoButtonControl<a name="doc_twobutton"></a> 
 A  TwoButtonControl can be created using an `ini` entry like this:
 ```
