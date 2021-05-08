@@ -28,7 +28,10 @@ Up to now the following input devices are implemented:
 
 * **TwoButtonControl**:
     This Device uses two Buttons and implements a third action if both buttons are pressed together.
-    
+
+* **StatusLED**:
+    A LED which will light up once the Phoniebox has fully booted up and is ready to be used. For additional information, see [extended documentation below](#doc_sled).
+
 Each section needs to be activated by setting `enabled: True`.
 
 Many example files are located in `~/RPi-Jukebox-RFID/components/gpio_control/example_configs/`.
@@ -125,6 +128,18 @@ functionCallUp: functionCallVolU
 ```
 
 TODO: details ...
+
+## StatusLED<a name="doc_sled"></a> 
+A  StatusLED can be created using an `ini` entry like this:
+```
+[StatusLED]
+enable: True
+Type: StatusLED
+Pin: 14
+```
+* **Pin**: GPIO number of the LED (mandatory option). Note that you should not attach LEDs to GPIO ports without a matching resistor in line.
+
+Note: If you prefer, you may also use `Type: MPDStatusLED` instead of `Type: StatusLED` - this makes no difference.
 
 ## Functions<a name="doc_funcs"></a> 
 The available functions are defined/implemented in `components/gpio_control/function_calls.py`:
