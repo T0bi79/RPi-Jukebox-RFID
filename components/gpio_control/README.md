@@ -93,7 +93,7 @@ led_pin: 17
 * **led_pin**: GPIO number of the LED (Default is `None`). Note that you should not attach LEDs to GPIO ports without a matching resistor in line.
 
 Again, there are more parameters than these. In the following comprehensive list you can also find the default values which are used automatically if you leave out these settings:
-* **time_pressed**: This parameter controls how many seconds (default: `2.0`) the button has to be hold until shutdown will be initiated.
+* **hold_time**: This parameter controls how many seconds (default: `3.0`) the button has to be hold until shutdown will be initiated.
 * **iteration_time**: This parameter determines the flashing speed of the LED indicator. Default value is `0.2` seconds.
 * **functionCall**: While the default action is `functionCallShutdown`, you might use this button type even with other functions than system shutdown (again, see [function documentation below](#doc_funcs) for a list of available functions).
 
