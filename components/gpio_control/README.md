@@ -113,6 +113,20 @@ functionCall: functionCallShutdown
 
 ## TwoButtonControl<a name="doc_twobutton"></a> 
 A  TwoButtonControl can be created using an `ini` entry like this:
+
+```
+[PrevNextStop]
+enabled: True
+Type: TwoButtonControl
+Pin1: 24
+Pin2: 25
+functionCall1: functionCallPlayerNext
+functionCall2: functionCallPlayerPrev
+functionCallTwoButtons: functionCallPlayerStop
+```
+In this example, you can navigate to the previous or, respectively next track by pushing the respective button. If you push both buttons simultaneously, the player stops.
+
+It is possible to combine the TwoButtonControl with the Repeat mode, e.g. to increment the volume further while the button keeps getting held:
 ```
 [VolumeControl]
 enabled: True
@@ -120,13 +134,15 @@ Type: TwoButtonControl
 Pin1: 5
 Pin2: 6
 hold_time: 0.3
-hold_repeat: True
+hold_mode: Repeat
 functionCall1: functionCallVolD
 functionCall2: functionCallVolU
 functionCallTwoButtons: functionCallVol0
 ```
+In this example, the volume will be in-/decreased step-wise using intervals of 0.3 seconds while the respective button is held. If both buttons are pushed simultaneously, the player is muted (volume 0).
 
-TODO: details ...
+Furthermore, the following settings can be used as described for the [regular buttons](#doc_button): **pull_up_down**, **edge**, **bouncetime**, **antibouncehack**
+
 
 ## RotaryEncoder<a name="doc_rotary"></a> 
 A  RotaryEncoder can be created using an `ini` entry like this:
