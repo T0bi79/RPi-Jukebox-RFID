@@ -102,7 +102,7 @@ Furthermore, the following settings can be used as described for the [regular bu
 Note that using a ShutdownButton without a LED can also be implemented with a normal button like this:
 
 ```
-[PlayPause]
+[Shutdown]
 enabled: True
 Type: Button
 Pin: 3
