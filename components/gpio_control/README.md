@@ -54,13 +54,13 @@ functionCall: functionCallPlayerPause
 However, a button has more parameters than these. In the following comprehensive list you can also find the default values which are used automatically if you leave out these settings:
 * **hold_mode**: Specifies what shall happen if the button is held pressed for longer than `hold_time`:
   *  `None` (Default): Nothing special will happen.
-  *  `Repeat`: The same function call will be repeated after each `hold_time` interval.
+  *  `Repeat`: The configured `functionCall` will be repeated after each `hold_time` interval (if you specify a `functionCall2` this will be used instead).
   *  `Postpone`: The function will not be called before `hold_time`, i.e. the button needs to be pressed this long to activate the function
   *  `SecondFunc`: After the instant execution of `functionCall`, holding the button for at least `hold_time` will execute a different function `functionCall2`.
   
   Holding the button even longer than `hold_time` will cause no further action unless you are in the `Repeat` mode.
 * **hold_time**: Reference time for this buttons `hold_mode` feature in seconds. Default is `0.3`. This setting is ignored if `hold_mode` is unset or `None`
-* **functionCall2**: Secondary function; default is `None`. This setting is ignored if `hold_mode` is unset or different to `SecondFunc`.
+* **functionCall2**: Secondary function; default is `None`. This setting is ignored unless `hold_mode` is set to `SecondFunc` or `Repeat`.
 * **pull_up_down**: Configures the internal Pull up/down resistors. Valid settings:
   * `pull_up` (Default). Internal pull-up resistors are activated. Use this if you attached a button to `GND` to the GPIO pin without any external pull-up resistor.
   * `pull_down`. Use this if you need the internal pull-down resistor activated.
@@ -187,3 +187,25 @@ The available functions are defined/implemented in `components/gpio_control/func
 * **functionCallPlayerStop**: Stop Player
 * **functionCallPlayerSeekFwd**: Seek 10 seconds forward
 * **functionCallPlayerSeekBack**: Seek 10 seconds backward
+
+
+## Troubleshooting<a name="doc_trouble"></a> 
+If you encounter bouncing effects with your buttons like unrequested/double actions after releasing a button, you can try to set `antibouncehack` to True:
+
+```
+[NextSong]
+enabled: True
+Type:  Button
+Pin: 26
+functionCall: functionCallPlayerNext
+antibouncehack: True
+```
+
+Instead of adding this to each button, you can also define it as default for all elements, by inserting the statement into the `Default` section which can be found at the beginning of the `~/RPi-Jukebox-RFID/settings/gpio_settings.ini` file:
+
+
+```
+[DEFAULT]
+enabled: True
+antibouncehack: True
+```
