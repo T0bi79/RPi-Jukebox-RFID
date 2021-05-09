@@ -56,9 +56,10 @@ However, a button has more parameters than these. In the following comprehensive
   *  `None` (Default): Nothing special will happen.
   *  `Repeat`: The configured `functionCall` is repeated after each `hold_time` interval.
   *  `Postpone`: The function will not be called before `hold_time`, i.e. the button needs to be pressed this long to activate the function
-  *  `SecondFunc`: After the instant execution of `functionCall`, holding the button for at least `hold_time` will execute a different function `functionCall2`.
+  *  `SecondFunc`: Holding the button for at least `hold_time` will additionally execute the function `functionCall2`.
   *  `SecondFuncRepeat`: Like SecondFunc, but `functionCall2` is repeated after each `hold_time` interval.
   
+  In every `hold_mode` except `Postpone`, the main action `functionCall` gets executed instantly.
   Holding the button even longer than `hold_time` will cause no further action unless you are in the `Repeat` or `SecondFuncRepeat` mode.
 * **hold_time**: Reference time for this buttons `hold_mode` feature in seconds. Default is `0.3`. This setting is ignored if `hold_mode` is unset or `None`
 * **functionCall2**: Secondary function; default is `None`. This setting is ignored unless `hold_mode` is set to `SecondFunc` or `SecondFuncRepeat`.
