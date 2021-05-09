@@ -15,7 +15,7 @@ In the following the different devices are described.
 Each device can have actions which correspond to function calls.
 Up to now the following input devices are implemented:
 * **Button**: 
-   A simple button which has a hold and repeat functionality as well as a delayed action. 
+   A simple button with optional long-press actions like hold and repeat functionality or delayed action. 
    Its main parameters are: `Pin` (use GPIO number here) and `functionCall`. For additional options, see [extended documentation below](#doc_button).
 
 * **ShutdownButton**: 
@@ -54,13 +54,14 @@ functionCall: functionCallPlayerPause
 However, a button has more parameters than these. In the following comprehensive list you can also find the default values which are used automatically if you leave out these settings:
 * **hold_mode**: Specifies what shall happen if the button is held pressed for longer than `hold_time`:
   *  `None` (Default): Nothing special will happen.
-  *  `Repeat`: The configured `functionCall` will be repeated after each `hold_time` interval (if you specify a `functionCall2` this will be used instead).
+  *  `Repeat`: The configured `functionCall` is repeated after each `hold_time` interval.
   *  `Postpone`: The function will not be called before `hold_time`, i.e. the button needs to be pressed this long to activate the function
   *  `SecondFunc`: After the instant execution of `functionCall`, holding the button for at least `hold_time` will execute a different function `functionCall2`.
+  *  `SecondFuncRepeat`: Like SecondFunc, but `functionCall2` is repeated after each `hold_time` interval.
   
-  Holding the button even longer than `hold_time` will cause no further action unless you are in the `Repeat` mode.
+  Holding the button even longer than `hold_time` will cause no further action unless you are in the `Repeat` or `SecondFuncRepeat` mode.
 * **hold_time**: Reference time for this buttons `hold_mode` feature in seconds. Default is `0.3`. This setting is ignored if `hold_mode` is unset or `None`
-* **functionCall2**: Secondary function; default is `None`. This setting is ignored unless `hold_mode` is set to `SecondFunc` or `Repeat`.
+* **functionCall2**: Secondary function; default is `None`. This setting is ignored unless `hold_mode` is set to `SecondFunc` or `SecondFuncRepeat`.
 * **pull_up_down**: Configures the internal Pull up/down resistors. Valid settings:
   * `pull_up` (Default). Internal pull-up resistors are activated. Use this if you attached a button to `GND` to the GPIO pin without any external pull-up resistor.
   * `pull_down`. Use this if you need the internal pull-down resistor activated.
