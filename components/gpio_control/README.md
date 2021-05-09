@@ -60,7 +60,9 @@ However, a button has more parameters than these. In the following comprehensive
   *  `SecondFuncRepeat`: Like SecondFunc, but `functionCall2` is repeated after each `hold_time` interval.
   
   In every `hold_mode` except `Postpone`, the main action `functionCall` gets executed instantly.
+  
   Holding the button even longer than `hold_time` will cause no further action unless you are in the `Repeat` or `SecondFuncRepeat` mode.
+  
 * **hold_time**: Reference time for this buttons `hold_mode` feature in seconds. Default is `0.3`. This setting is ignored if `hold_mode` is unset or `None`
 * **functionCall2**: Secondary function; default is `None`. This setting is ignored unless `hold_mode` is set to `SecondFunc` or `SecondFuncRepeat`.
 * **pull_up_down**: Configures the internal Pull up/down resistors. Valid settings:
