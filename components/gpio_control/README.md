@@ -173,7 +173,7 @@ Pin: 14
 Note: If you prefer, you may also use `Type: MPDStatusLED` instead of `Type: StatusLED` - this makes no difference.
 
 ## Further examples
-By tapping the potential of the features presented above, you can create Buttons like this:
+By tapping the potential of the features presented above, you can create buttons like this:
 
 ### Play random tracks or folders
 If you have buttons to navigate to the next/previous track it might be a good idea to define that holding these buttons for a certain time (e.g. 2 seconds) will activate a random (surpise!) track or even folder/card. This might look like this
