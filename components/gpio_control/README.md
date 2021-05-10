@@ -177,22 +177,6 @@ Note: If you prefer, you may also use `Type: MPDStatusLED` instead of `Type: Sta
 ## Further examples
 By tapping the potential of the features presented above, you can create Buttons like this:
 
-### Short and long jumps
-If you are using two buttons to jump backwards or forwards within the current track, you can use the repeated hold action to allow larger jumps:
-```
-[SkipForward]
-enabled: True
-Type:  Button
-Pin: 24
-pull_up_down: pull_up
-hold_time: 5.0
-hold_mode: SecondFuncRepeat
-functionCall: functionCallPlayerSeekFwd
-functionCall2: functionCallPlayerSeekFarFwd
-```
-In this example, a short press initiates a short jump forward by 10 seconds (functionCallPlayerSeekFwd) while holding the button will cause further, longer jumps. In this case it will cause a jump of 1 minute forward  (functionCallPlayerSeekFarFwd) every 5 seconds. If you wish, you can adjust these values in `components/gpio_control/function_calls.py`.
-For jumping backwards, this can be done equivalently (see [function list below](#doc_funcs)).
-
 ### Play random tracks or folders
 If you have buttons to navigate to the next/previous track it might be a good idea to define that holding these buttons for a certain time (e.g. 2 seconds) will activate a random (surpise!) track or even folder/card. This might look like this
 
@@ -217,6 +201,23 @@ hold_mode: SecondFunc
 functionCall: functionCallPlayerPrev
 functionCall2: functionCallPlayerRandomFolder
 ```
+
+### Short and long jumps
+If you are using two buttons to jump backwards or forwards within the current track, you can use the repeated hold action to allow larger jumps:
+```
+[SkipForward]
+enabled: True
+Type:  Button
+Pin: 24
+pull_up_down: pull_up
+hold_time: 5.0
+hold_mode: SecondFuncRepeat
+functionCall: functionCallPlayerSeekFwd
+functionCall2: functionCallPlayerSeekFarFwd
+```
+In this example, a short press initiates a short jump forward by 10 seconds (functionCallPlayerSeekFwd) while holding the button will cause further, longer jumps. In this case it will cause a jump of 1 minute forward  (functionCallPlayerSeekFarFwd) every 5 seconds. If you wish, you can adjust these values in `components/gpio_control/function_calls.py`.
+For jumping backwards, this can be done equivalently (see [function list below](#doc_funcs)).
+
 
 ## Functions<a name="doc_funcs"></a> 
 The available functions are defined/implemented in `components/gpio_control/function_calls.py`:
