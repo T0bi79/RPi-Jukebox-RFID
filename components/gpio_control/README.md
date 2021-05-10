@@ -220,7 +220,7 @@ For jumping backwards, this can be done equivalently (see [function list below](
 ## Functions<a name="doc_funcs"></a> 
 The available functions are defined/implemented in `components/gpio_control/function_calls.py`:
 * **functionCallShutdown**: System shutdown
-* **functionCallVolU**: Volupe up
+* **functionCallVolU**: Volume up
 * **functionCallVolD**: Volume down
 * **functionCallVol0**: Mute
 * **functionCallPlayerNext**: Next track
