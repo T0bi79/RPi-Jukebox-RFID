@@ -160,8 +160,6 @@ functionCallDown: functionCallVolD
 functionCallUp: functionCallVolU
 ```
 
-TODO: details ...
-
 ## StatusLED<a name="doc_sled"></a> 
 A  StatusLED can be created using an `ini` entry like this:
 ```
