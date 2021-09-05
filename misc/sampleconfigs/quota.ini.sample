@@ -1,0 +1,14 @@
+[QuotaConfig]
+default_quota = 180
+reset_time = 360
+shutdown_waitmode = aftertrk
+audiomsgfile = farewell_en.mp3
+quota_via_webif = True
+
+[LedConfig]
+led_gpios = []
+led_duration = 30
+led_animation = 0.3
+
+[QuotaState]
+last_granttime = 0

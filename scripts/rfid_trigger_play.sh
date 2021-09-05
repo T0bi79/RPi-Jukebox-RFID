@@ -306,6 +306,38 @@ if [ "$CARDID" ]; then
         $CMDBLUETOOTHTOGGLE)
             $PATHDATA/playout_controls.sh -c=bluetoothtoggle -v=toggle
             ;;
+        $GRANTQUOTA60)
+            # grant quota of 1 hour
+            $PATHDATA/playout_controls.sh -c=grantquota -v=60
+            ;;
+        $GRANTQUOTA90)
+            # grant quota of 1.5 hours
+            $PATHDATA/playout_controls.sh -c=grantquota -v=90
+            ;;
+        $GRANTQUOTA120)
+            # grant quota of 2 hours
+            $PATHDATA/playout_controls.sh -c=grantquota -v=120
+            ;;
+        $GRANTQUOTA150)
+            # grant quota of 2.5 hours
+            $PATHDATA/playout_controls.sh -c=grantquota -v=150
+            ;;
+        $GRANTQUOTA180)
+            # grant quota of 3 hours
+            $PATHDATA/playout_controls.sh -c=grantquota -v=180
+            ;;
+        $GRANTQUOTA240)
+            # grant quota of 4 hours
+            $PATHDATA/playout_controls.sh -c=grantquota -v=240
+            ;;
+        $GRANTQUOTA300)
+            # grant quota of 5 hours
+            $PATHDATA/playout_controls.sh -c=grantquota -v=300
+            ;;
+        $QUOTA_OFF)
+            # disable quota limitaton
+            $PATHDATA/playout_controls.sh -c=grantquota -v=0
+            ;;
         *)
 
             # We checked if the card was a special command, seems it wasn't.

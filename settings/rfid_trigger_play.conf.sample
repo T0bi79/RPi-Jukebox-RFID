@@ -157,3 +157,21 @@ RECORDSTART600="%RECORDSTART600%"
 RECORDSTOP="%RECORDSTOP%"
 ### Replay latest recording
 RECORDPLAYBACKLATEST="%RECORDPLAYBACKLATEST%"
+
+## Quota control
+### Grant 60 minutes of fresh quota
+GRANTQUOTA60="%GRANTQUOTA60%"
+### Grant 90 minutes of fresh quota
+GRANTQUOTA90="%GRANTQUOTA90%"
+### Grant 120 minutes of fresh quota
+GRANTQUOTA120="%GRANTQUOTA120%"
+### Grant 150 minutes of fresh quota
+GRANTQUOTA150="%GRANTQUOTA150%"
+### Grant 180 minutes of fresh quota
+GRANTQUOTA180="%GRANTQUOTA180%"
+### Grant 240 minutes of fresh quota
+GRANTQUOTA240="%GRANTQUOTA240%"
+### Grant 300 minutes of fresh quota
+GRANTQUOTA300="%GRANTQUOTA300%"
+### Temporarily disable quota enforcement
+QUOTA_OFF="%QUOTA_OFF%"

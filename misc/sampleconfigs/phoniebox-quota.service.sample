@@ -1,0 +1,18 @@
+[Unit]
+Description=Phoniebox Quota Service
+After=network.target iptables.service firewalld.service
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/RPi-Jukebox-RFID/components/quota/
+ExecStart=/home/pi/RPi-Jukebox-RFID/components/quota/service.py
+SyslogIdentifier=PhonieboxQuotaService
+StandardOutput=syslog
+StandardError=syslog
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

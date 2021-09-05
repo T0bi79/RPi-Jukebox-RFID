@@ -72,6 +72,11 @@ $lang['playerFilePlayed'] = "is gespeeld";
 $lang['playerFileAdded'] = "is toegevoegd aan de playlist";
 $lang['playerFileDeleted'] = "is verwijderd";
 
+// time quota
+$lang['globalQuota'] = "Time quota";
+$lang['globalQuotaGrant'] = "Grant time quota (in minutes):";
+$lang['globalQuotaUnlimited'] = "Decontrol quota";
+
 // Edition (classic, +spotify)
 $lang['globalEdition'] = "Editie";
 $lang['classic'] = "Classic editie (barebones)";

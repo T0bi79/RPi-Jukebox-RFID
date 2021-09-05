@@ -213,6 +213,7 @@ $nonEmptyCommands = array(
     'singleenable',
     'singledisable',
     'DebugLogClear',
+    'grantquota',
 );
 foreach ($nonEmptyCommands as $command) {
     if(isset($_GET[$command]) && trim($_GET[$command]) != "") {
@@ -311,6 +312,7 @@ $commandToAction = array(
     'stopplayoutafter' => "/usr/bin/sudo ".$conf['scripts_abs']."/playout_controls.sh -c=playerstopafter -v=%s",// set playerstopafter time (auto stop timer)
     'playpos' => "/usr/bin/sudo ".$conf['scripts_abs']."/playout_controls.sh -c=playerplay -v=%s",          // play from playlist position,
     'DebugLogClear' => "sudo rm ../logs/debug.log; sudo touch ../logs/debug.log; sudo chmod 777 ../logs/debug.log",
+    'grantquota' => "/usr/bin/sudo ".$conf['scripts_abs']."/playout_controls.sh -c=grantquota -v=%s",       // grant new (>0) or disable (0) time quota.
     'scan' => array(
         'true' => "/usr/bin/sudo ".$conf['scripts_abs']."/playout_controls.sh -c=scan > /dev/null 2>&1 &"   // scan the library
     ),

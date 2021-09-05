@@ -71,6 +71,11 @@ $lang['globalPriority'] = "Priority";
 $lang['globalEmail'] = "Email address";
 $lang['globalAudioSink'] = "Audio Devices";
 
+// time quota
+$lang['globalQuota'] = "Time quota";
+$lang['globalQuotaGrant'] = "Grant time quota (in minutes):";
+$lang['globalQuotaUnlimited'] = "Decontrol quota";
+
 // Player title HTML
 $lang['playerSeekBack'] = "seek back";
 $lang['playerSeekAhead'] = "seek forward";

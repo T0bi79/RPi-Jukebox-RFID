@@ -71,6 +71,11 @@ $lang['globalPriority'] = "Priorität";
 $lang['globalEmail'] = "Email address";
 $lang['globalAudioSink'] = "Audio Ausgabegeräte";
 
+// time quota
+$lang['globalQuota'] = "Zeitkontingent";
+$lang['globalQuotaGrant'] = "Kontingent erteilen (in Min.):";
+$lang['globalQuotaUnlimited'] = "Kontingent aufheben";
+
 // Player title HTML
 $lang['playerSeekBack'] = "Rückwärts spulen";
 $lang['playerSeekAhead'] = "Vorwärts spulen";

@@ -73,6 +73,7 @@ NOW=`date +%Y-%m-%d.%H:%M:%S`
 # readwifiipoverspeaker
 # bluetoothtoggle
 # switchaudioiface
+# grantquota
 
 # The absolute path to the folder which contains all the scripts.
 # Unless you are working with symlinks, leave the following line untouched.
@@ -1128,6 +1129,16 @@ case $COMMAND in
             fi
         else
             dbg "Command requires \"amixer\" as volume manager."
+        fi
+        ;;
+    grantquota)
+        if [ $VALUE -gt 0 ];
+        then
+            # grant new time quota
+            python3 $PATHDATA/../components/quota/iface_cli.py -n $VALUE
+        else
+            # disable time quota
+            python3 $PATHDATA/../components/quota/iface_cli.py -a
         fi
         ;;
     *)
