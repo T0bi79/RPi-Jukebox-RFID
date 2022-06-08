@@ -61,7 +61,7 @@ class quota_if_server():
             if param.isdigit():
                 secs = int(param)
                 self.log('Granting new quota of {}sec. ..'.format(secs))
-                self.quota_svc.newTimer(secs, True)
+                self.quota_svc.newTimer(secs)
             else:
                 self.log('Parameter missing or invalid...')
         elif cmd == 'canceltimer':

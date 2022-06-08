@@ -9,8 +9,8 @@ Group=pi
 WorkingDirectory=/home/pi/RPi-Jukebox-RFID/components/quota/
 ExecStart=/home/pi/RPi-Jukebox-RFID/components/quota/service.py
 SyslogIdentifier=PhonieboxQuotaService
-StandardOutput=syslog
-StandardError=syslog
+StandardOutput=journal
+StandardError=journal
 Restart=always
 RestartSec=3
 

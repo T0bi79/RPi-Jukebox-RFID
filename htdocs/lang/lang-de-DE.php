@@ -71,7 +71,7 @@ $lang['globalPriority'] = "Priorität";
 $lang['globalEmail'] = "Email address";
 $lang['globalAudioSink'] = "Audio Ausgabegeräte";
 
-// time quota
+// Time quota component
 $lang['globalQuota'] = "Zeitkontingent";
 $lang['globalQuotaGrant'] = "Kontingent erteilen (in Min.):";
 $lang['globalQuotaUnlimited'] = "Kontingent aufheben";
@@ -87,7 +87,7 @@ $lang['playerLoop'] = "Wiederholung";
 $lang['playerStop'] = "Player stoppen";
 $lang['playerVolDown'] = "Lautstärke verringern";
 $lang['playerVolUp'] = "Lautstärke erhöhen";
-$lang['player'] = "Stumm ein/aus";
+$lang['playerMute'] = "Stumm ein/aus";
 $lang['playerFilePlayed'] = "wird abgespielt";
 $lang['playerFileAdded'] = "wurde der Playlist hinzugef&uuml;gt";
 $lang['playerFileDeleted'] = "entfernt";
